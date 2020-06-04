@@ -17,7 +17,7 @@ while getopts "d:h" opcion; do
 			forma_de_uso
 			;;
 		*)
-			forma_uso
+			forma_de_uso
 			;;
 	esac
 done
