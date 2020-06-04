@@ -10,7 +10,7 @@ if [ $# != 1 ]; then
 fi
 while getopts "d:h" opcion; do
 	case "$opcion" in
-		f)
+		d)
 			dataIn=$OPTARG
 			;;
 		h)
