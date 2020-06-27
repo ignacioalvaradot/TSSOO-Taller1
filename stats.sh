@@ -22,10 +22,11 @@ while getopts "d:h" opcion; do
 	esac
 done
 if [ ! -e $dataIn ]; then
-	echo "El archivo $2 no existe"
+	echo "La ruta  $2 no existe"
 	exit
 fi
-#Punto 1
+#Parte 1
+Parte1(){
 executionSummary=(`find $dataIn -name '*.txt' -print | sort | grep executionSummary | grep -v '._'`)
 archivo_final="metrics.txt"
 temporal="T_simulacion.txt"
@@ -53,7 +54,9 @@ do
 printf "tsimTotal : promedio : min : max \n memUsed: promedio : min : max \n" >> $archivo_final
 printf "%i : %i : %i : %i \n%i : %.2f : %i: %i \n" $op_tsimtotal $op_memused >> $archivo_final
 rm -f $temporal $temporal2
+}
 #Parte2
+Parte2(){
 Summary=(`find $dataIn -name '*.txt' -print | sort | grep summary | grep -v '._'`)
 archivo_final2="evacuation.txt"
 temporal3="all.txt"
@@ -167,3 +170,36 @@ rm -f $temporal10
 rm -f $temporal11
 rm -f $temporal12
 rm -f $temporal13
+}
+#Parte 3
+Parte3(){
+usePhoneFiles=(`find $dataIn -name '*.txt' -print | sort | grep usePhone | grep -v '._'`)
+archivo_final3="usePhone-stats.txt"
+temporal14="phone.txt"
+for i in ${usePhoneFiles[*]};
+	do
+		tiempos=(`cat $i | tail -n+3 | cut -d ':' -f 3`)
+		for i in ${tiempos[*]};
+		do
+			printf "%d:" $i >> $temporal14
+		done
+		printf "\n" >> $temporal14
+	done
+
+	totalFields=$(head -1 $temporal14 | sed 's/.$//' | tr ':' '\n'| wc -l)
+	printf "#timestamp:promedio:min:max\n" >> $archivo_final3
+	for i in $(seq 1 $totalFields); do
+		out=$(cat $temporal14 | cut -d ':' -f $i |\
+			awk 'BEGIN{ min=2**63-1; max=0}\
+				{if($1<min){min=$1};if($1>max){max=$1};total+=$1; count+=1;}\
+				END {print total/count":"max":"min}')
+		printf "$i:$out\n" >> $archivo_final3
+	done
+
+rm -f $temporal14
+}
+if [  -d $dataIn ]; then
+        Parte1
+	Parte2
+	Parte3
+fi
