@@ -4,7 +4,7 @@ forma_de_uso(){
 	echo -e  "Uso: ./stats.sh -d <directorio datos> [-h] \n -d: directorio donde están los datos a procesar. \n -h: muestra este mensaje y termina."
 	exit 1
 }
-# La variable $# es equiv a argc
+
 if [ $# = 0 ]; then
 	forma_de_uso
 fi
@@ -25,8 +25,8 @@ if [ ! -e $dataIn ]; then
 	echo "La ruta  $2 no existe"
 	exit
 fi
-#Parte 1
-Parte1(){
+#Tarea 1
+Tarea1(){
 executionSummary=(`find $dataIn -name '*.txt' -print | sort | grep executionSummary | grep -v '._'`)
 archivo_final="metrics.txt"
 temporal="T_simulacion.txt"
@@ -43,7 +43,7 @@ do
 													total+=$temporal; count+=1;\
 													} \
 													END{ print total, total/count, min, max }')
-	memUsed=$(cat $i | tail -n+2 | awk -F ':' 'BEGIN{suma_memoria=0}{suma_memoria=$10;} END{print suma_memoria}')
+	memUsed=$(cat $i | tail -n+2 | awk -F ':' 'BEGIN{suma_memoria=0}{suma_memoria=$9;} END{print suma_memoria}')
 	printf "$memUsed \n" >>$temporal2
 	op_memused=$(cat $temporal2 | awk 'BEGIN{ min=2**63-1; max=0}{if($temporal2<min){min=$temporal2};\
 													if($temporal2>max){max=$temporal2};\
@@ -55,8 +55,8 @@ printf "tsimTotal : promedio : min : max \n memUsed: promedio : min : max \n" >>
 printf "%i : %i : %i : %i \n%i : %.2f : %i: %i \n" $op_tsimtotal $op_memused >> $archivo_final
 rm -f $temporal $temporal2
 }
-#Parte2
-Parte2(){
+#Tarea2
+Tarea2(){
 Summary=(`find $dataIn -name '*.txt' -print | sort | grep summary | grep -v '._'`)
 archivo_final2="evacuation.txt"
 temporal3="all.txt"
@@ -171,8 +171,8 @@ rm -f $temporal11
 rm -f $temporal12
 rm -f $temporal13
 }
-#Parte 3
-Parte3(){
+#Tarea 3
+Tarea3(){
 usePhoneFiles=(`find $dataIn -name '*.txt' -print | sort | grep usePhone | grep -v '._'`)
 archivo_final3="usePhone-stats.txt"
 temporal14="phone.txt"
@@ -199,7 +199,7 @@ for i in ${usePhoneFiles[*]};
 rm -f $temporal14
 }
 if [  -d $dataIn ]; then
-        Parte1
-	Parte2
-	Parte3
+        Tarea1
+	Tarea2
+	Tarea3
 fi
